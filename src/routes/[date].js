@@ -9,11 +9,6 @@ const tasks = [];
 const defaultTask = { title: 'Пример задачи' };
 
 /**
- * Добавляем пример задачи в массив задач.
- */
-// tasks.push(defaultTask);
-
-/**
  * Функция для получения даты в формате ISO из параметров запроса.
  * Если дата в нужном формате не обнаружена, то возвращаем null.
  */
@@ -34,6 +29,9 @@ function getDateFromRequestParams(params) {
     return dateRegxExecResult !== null ? dateRegxExecResult[0] : null;
 }
 
+/**
+ * Endpoint для получения задач на запрошенный день.
+ */
 export async function get({ params }) {
     /**
      * Дата в формате ISO из параметров запроса.
@@ -53,6 +51,9 @@ export async function get({ params }) {
     };
 }
 
+/**
+ * Endpoint для добавления задачи.
+ */
 export async function post({ params, request }) {
     /**
      * Дата в формате ISO из параметров запроса.
@@ -65,14 +66,91 @@ export async function post({ params, request }) {
     if (date === null) return { status: 404 };
 
     /**
-     * Ожидаем получения тела запроса (данных формы).
+     * Ожидаем получения тела запроса.
      */
-    const body = await request.formData();
+    const body = await request.json();
 
+    /**
+     * Добавляем дату в массив задач, если она отсутствует.
+     */
     if (!tasks[date]) tasks[date] = [];
 
-    tasks[date].push({ title: body.get('title') });
+    /**
+     * Добавляем задачу в массив задач на дату.
+     */
+    tasks[date].push(body.task);
 
+    /**
+     * Возвращаем задачи на дату и саму дату.
+     */
+    return {
+        body: { tasks: tasks[date], date }
+    };
+}
+
+/**
+ * Endpoint для обновления задачи.
+ */
+export async function put({ params, request }) {
+    /**
+     * Дата в формате ISO из параметров запроса.
+     */
+    const date = getDateFromRequestParams(params);
+
+    /**
+     * Возвращаем 404 если в параметрах запроса передана неверная дата.
+     */
+    if (date === null) return { status: 404 };
+
+    /**
+     * Ожидаем получения тела запроса.
+     */
+    const body = await request.json();
+
+    /**
+     * Обновляем задачу.
+     */
+    tasks[date][body.id] = body.task;
+
+    /**
+     * Возвращаем переадресацию на страницу,
+     * с которой был совершен запрос.
+     * 
+     * Неодходимо для того, чтобы избавиться от параметра
+     * _method в URL после выполнения запроса.
+     */
+    return {
+        body: { tasks: tasks[date], date }
+    };
+}
+
+/**
+ * Endpoint для удаления задачи.
+ */
+export async function del({ params, request }) {
+    /**
+     * Дата в формате ISO из параметров запроса.
+     */
+    const date = getDateFromRequestParams(params);
+
+    /**
+     * Возвращаем 404 если в параметрах запроса передана неверная дата.
+     */
+    if (date === null) return { status: 404 };
+
+    /**
+     * Ожидаем получения тела запроса.
+     */
+    const body = await request.json();
+
+    /**
+     * Удаляем задачу из сегодняшних задач.
+     */
+    tasks[date] = tasks[date].filter((task) => task.title !== body.title);
+
+    /**
+     * Возвращаем задачи на дату и саму дату.
+     */
     return {
         body: { tasks: tasks[date], date }
     };
