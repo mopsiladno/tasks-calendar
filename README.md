@@ -1,6 +1,6 @@
 # tasks-calendar
 
-Календарь задач с общим доступом по ссылке, работающий на [SvelteKit`](https://kit.svelte.dev/).
+Календарь задач с общим доступом по ссылке, работающий на [SvelteKit](https://kit.svelte.dev/).
 
 ## Установка
 
