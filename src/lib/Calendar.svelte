@@ -2,7 +2,7 @@
     /**
      * Выбранная дата, в формате ISO ('yyyy-mm-dd').
      */
-    let selectedIsoDate = iso(new Date());
+    export let selectedIsoDate;
 
     /**
      * Названия дней недели.
@@ -268,9 +268,13 @@
 
 <table>
     <tr>
-        <td class="btn" on:click={() => go(-1)}>&lsaquo;</td>
+        <td class="btn" style="font-size: 18pt;" on:click={() => go(-1)}
+            >&lsaquo;</td
+        >
         <td class="monthName" colspan="5">{monthName} {year}</td>
-        <td class="btn" on:click={() => go(+1)}>&rsaquo;</td>
+        <td class="btn" style="font-size: 18pt;" on:click={() => go(+1)}
+            >&rsaquo;</td
+        >
     </tr>
     <tr>
         {#each weekDaysNames as day}
@@ -280,13 +284,17 @@
     {#each weeks as week}
         <tr>
             {#each week as day}
-                <td
-                    class="btn"
-                    class:selected={day.isoDate === selectedIsoDate}
-                    class:past={day.month < currentMonth}
-                    class:future={day.month > currentMonth}
-                    on:click={() => selectDate(day.isoDate)}>{day.date}</td
-                >
+                <td>
+                    <a
+                        class="btn"
+                        class:selected={day.isoDate === selectedIsoDate}
+                        class:past={day.month < currentMonth}
+                        class:future={day.month > currentMonth}
+                        href={day.isoDate}
+                    >
+                        {day.date}
+                    </a>
+                </td>
             {/each}
         </tr>
     {/each}
@@ -299,34 +307,38 @@
 
     td,
     th {
-        width: 28px;
         text-align: center;
-        border-radius: 4px;
-        line-height: 24px;
-        margin: 0;
-        padding: 0;
         font-weight: normal;
+        width: 50px;
+        height: 50px;
     }
 
-    td.past,
-    td.future {
-        opacity: 0.5;
+    a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        padding: 1em;
+    }
+
+    a.past,
+    a.future {
+        color: lightgray;
+    }
+
+    a.selected {
+        color: white;
+        font-weight: bold;
+        background-color: #fb3f4a;
     }
 
     .btn {
+        border-radius: 100%;
         cursor: pointer;
     }
 
     .btn:hover {
         background: gray;
         color: white;
-    }
-
-    td.selected {
-        color: #ffffff;
-        font-weight: bold;
-        background-color: #006dcc;
-        border-color: #002a80;
     }
 
     .monthName {
