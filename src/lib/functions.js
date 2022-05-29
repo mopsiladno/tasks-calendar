@@ -1,3 +1,5 @@
+import { get, ref, set } from 'firebase/database';
+
 /**
  * Метод для преобразования даты в формат ISO.
  *
@@ -28,4 +30,41 @@ export function iso(date) {
         "-" +
         pad(date.getDate())
     );
+}
+
+/**
+ * Получить задачи из БД.
+ */
+export async function getTasks(db, token, date) {
+    /**
+     * Путь, по которому необходимо сохранить данные в БД.
+     */
+    const path = `tasks/${token}/${date}`;
+
+    /**
+     * Получить задачи из БД.
+     *
+     * Если задачи в БД отсутствуют, то возвращаем клон задач по-умолчанию.
+     *
+     * Клонирование необходимо для того, чтобы не перезаписать задачи по-умолчанию
+     * при последующем изменении значения, возвращенного из этой функции.
+     */
+    return (await get(ref(db, path))).val();
+}
+
+/**
+ * Обновить задачи в БД.
+ *
+ * @param tasks задачи, на которые необходимо обновить
+ */
+export async function setTasks(db, token, date, tasks) {
+    /**
+     * Путь, по которому необходимо сохранить данные в БД.
+     */
+    const path = `tasks/${token}/${date}`;
+
+    /**
+     * Обновить задачи в БД.
+     */
+    return await set(ref(db, path), tasks);
 }

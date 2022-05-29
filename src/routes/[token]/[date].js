@@ -1,12 +1,10 @@
+import db from '$lib/firebase';
+import { getTasks, setTasks } from '$lib/functions';
+
 /**
  * Массив задач на запрошенную дату.
  */
 const tasks = [];
-
-/**
- * Пример задачи на запрашиваемую дату.
- */
-const defaultTask = { title: 'Пример задачи' };
 
 /**
  * Функция для получения даты в формате ISO из параметров запроса.
@@ -34,6 +32,11 @@ function getDateFromRequestParams(params) {
  */
 export async function get({ params }) {
     /**
+     * Уникальный токен пользователя.
+     */
+    const token = params.token;
+
+    /**
      * Дата в формате ISO из параметров запроса.
      */
     const date = getDateFromRequestParams(params);
@@ -42,6 +45,11 @@ export async function get({ params }) {
      * Возвращаем 404 если в параметрах запроса передана неверная дата.
      */
     if (date === null) return { status: 404 };
+
+    /**
+     * Получаем задачи на день из БД.
+     */
+    tasks[date] = await getTasks(db, token, date) ?? [];
 
     /**
      * Возвращаем запрашиваемую дату и задачи на эту дату.
@@ -55,6 +63,11 @@ export async function get({ params }) {
  * Endpoint для добавления задачи.
  */
 export async function post({ params, request }) {
+    /**
+     * Уникальный токен пользователя.
+     */
+    const token = params.token;
+
     /**
      * Дата в формате ISO из параметров запроса.
      */
@@ -81,6 +94,11 @@ export async function post({ params, request }) {
     tasks[date].push(body.task);
 
     /**
+     * Обновляем задачи на день в БД.
+     */
+    await setTasks(db, token, date, tasks[date]);
+
+    /**
      * Возвращаем задачи на дату и саму дату.
      */
     return {
@@ -92,6 +110,11 @@ export async function post({ params, request }) {
  * Endpoint для обновления задачи.
  */
 export async function put({ params, request }) {
+    /**
+     * Уникальный токен пользователя.
+     */
+    const token = params.token;
+
     /**
      * Дата в формате ISO из параметров запроса.
      */
@@ -113,6 +136,11 @@ export async function put({ params, request }) {
     tasks[date][body.id] = body.task;
 
     /**
+     * Обновляем задачи на день в БД.
+     */
+    await setTasks(db, token, date, tasks[date]);
+
+    /**
      * Возвращаем переадресацию на страницу,
      * с которой был совершен запрос.
      * 
@@ -128,6 +156,11 @@ export async function put({ params, request }) {
  * Endpoint для удаления задачи.
  */
 export async function del({ params, request }) {
+    /**
+     * Уникальный токен пользователя.
+     */
+    const token = params.token;
+
     /**
      * Дата в формате ISO из параметров запроса.
      */
@@ -146,7 +179,12 @@ export async function del({ params, request }) {
     /**
      * Удаляем задачу из сегодняшних задач.
      */
-    tasks[date] = tasks[date].filter((task) => task.title !== body.title);
+    tasks[date] = tasks[date].filter((task, id) => id !== body.id);
+
+    /**
+     * Обновляем задачи на день в БД.
+     */
+    await setTasks(db, token, date, tasks[date]);
 
     /**
      * Возвращаем задачи на дату и саму дату.

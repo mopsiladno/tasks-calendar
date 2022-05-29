@@ -3,7 +3,10 @@
 
     const dispatch = createEventDispatcher();
 
-    let task = {};
+    let task = {
+        title: "",
+        done: false,
+    };
 
     function addTask() {
         fetch("", {
@@ -15,7 +18,10 @@
         }).then((response) => {
             response.json().then((body) => {
                 dispatch("taskAdd", body);
-                task = {};
+                task = {
+                    title: "",
+                    done: false,
+                };
             });
         });
     }

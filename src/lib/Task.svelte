@@ -23,7 +23,7 @@
     function deleteTask() {
         fetch("", {
             method: "DELETE",
-            body: JSON.stringify(task),
+            body: JSON.stringify({ id }),
             headers: {
                 Accept: "application/json",
             },
