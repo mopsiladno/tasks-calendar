@@ -1,9 +1,10 @@
 export const firebaseConfig = {
-    apiKey: "AIzaSyBj5qmrUKy6diAwRjV70nFp3F_Z_glf8xY",
-    authDomain: "my-svetle-project.firebaseapp.com",
-    databaseURL: "https://my-svetle-project-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "my-svetle-project",
-    storageBucket: "my-svetle-project.appspot.com",
-    messagingSenderId: "328687957507",
-    appId: "1:328687957507:web:523e54c643bafb72d50036",
+    apiKey: "AIzaSyAzrLYSKsbL4nE1NW4EZn29S8Z4TaVAXHA",
+    authDomain: "realtime-database-82283.firebaseapp.com",
+    databaseURL: "https://realtime-database-82283-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "realtime-database-82283",
+    storageBucket: "realtime-database-82283.appspot.com",
+    messagingSenderId: "663804338729",
+    appId: "1:663804338729:web:dff9c86391bdafe5187238",
+    measurementId: "G-HBDL8MNN62"
 }
